@@ -1,0 +1,7 @@
+body {
+	height: 10000px;
+}
+
+#target {
+	position: absolute;
+}

@@ -1,13 +1,13 @@
 
-# YourLib
+jQuery-Smoothie
+===============
 
-Description
+Yet another jQuery plugin for smooth scrolling.
 
-## License 
+License 
+-------
 
-(The MIT License)
-
-Copyright (c) 2009 Your Name &lt;Your Email&gt;
+Copyright (c) 2011 Sylvester Keil &lt;http://sylvester.keil.or.at&gt;
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
