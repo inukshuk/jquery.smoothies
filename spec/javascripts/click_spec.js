@@ -1,10 +1,12 @@
 describe('When I click on a link', function () {
+	var timeout = 250;
+	
 	describe('and the target is inside the viewport', function () {
 		var link, target, viewport, position;
 
 		beforeEach(function () {
 			link = create('a', { text: 'link', href: '#target' });
-			viewport = $('html, body');
+			viewport = $('html');
 			position = getPosition(viewport);
 			target = create('div', { text: 'target', id: 'target', css: { top: 42 } });
 			expect(target).toBeVisible();
@@ -24,7 +26,7 @@ describe('When I click on a link', function () {
 				click(link);
 			});
 			
-			waits(250);
+			waits(timeout);
 			
 			runs(function () {
 				expect(window.location.hash).not.toEqual(old_hash);
@@ -36,7 +38,7 @@ describe('When I click on a link', function () {
 				click(link);
 			});
 			
-			waits(250);
+			waits(timeout);
 			
 			runs(function () {
 				expect(target).toBeVisible();
@@ -52,7 +54,7 @@ describe('When I click on a link', function () {
 
 		beforeEach(function () {
 			link = create('a', { text: 'link', href: '#target' });
-			viewport = $('html, body').scrollTop(0).scrollLeft(0);
+			viewport = $('html').scrollTop(0).scrollLeft(0);
 			position = getPosition(viewport);
 			target = create('div', { text: 'target', id: 'target', css: { top: 4242 } });
 			expect(target).not.toBeVisible();
@@ -72,7 +74,7 @@ describe('When I click on a link', function () {
 				click(link);
 			});
 
-			waits(250);
+			waits(timeout);
 			
 			runs(function () {
 				expect(window.location.hash).not.toEqual(old_hash);
@@ -84,7 +86,7 @@ describe('When I click on a link', function () {
 				click(link);
 			});
 			
-			waits(250);
+			waits(timeout);
 			
 			runs(function () {
 				expect(target).toBeVisible();

@@ -1,4 +1,6 @@
 describe('When the hash changes', function () {
+	var timeout = 250;
+	
 	describe('and the target is inside the viewport', function () {
 		var target, viewport, position;
 		
@@ -21,7 +23,7 @@ describe('When the hash changes', function () {
 				goToHash('target');
 			});
 			
-			waits(250);
+			waits(timeout);
 			
 			runs(function () {
 				expect(target).toBeVisible();
@@ -54,7 +56,7 @@ describe('When the hash changes', function () {
 				goToHash('target');
 			});
 			
-			waits(250);
+			waits(timeout);
 			
 			runs(function () {
 				expect(target).toBeVisible();
@@ -89,7 +91,7 @@ describe('When the hash changes', function () {
 				goToHash('target');
 			});
 			
-			waits(250);
+			waits(timeout);
 			
 			runs(function () {
 				expect(target).toBeVisible();
