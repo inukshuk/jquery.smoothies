@@ -15,6 +15,9 @@ beforeEach(function () {
 		toHaveMovedFrom: function (original) {
 			return this.actual.scrollTop() !== original.left &&
 				this.actual.scrollLeft() !== original.left;
+		},
+		toBeEmpty: function () {
+			return this.actual.length === 0;
 		}
   });
 });

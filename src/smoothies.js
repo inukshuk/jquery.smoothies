@@ -5,59 +5,77 @@
 ;(function ($, smoothie, smoothies, version) {
 	var store = {},
 
-	counter = 0,
+	aSmoothie = function (scope) {
+		var that = {}, my = scope || {};
+		
+		that.init = function (element, options) {
+			my.$ = $(element);
+			my.options = $.extend({}, $.fn[smoothie].defaults);			
+			
+			this.hash = my.hash();
+			
+			return this;
+		};
+		
+		// Returns the Smoothie's position (cached if enabled in global settings)
+		that.position = function () {
+			if ($[smoothies].settings.caching === false) {
+				my.position.refresh();
+			}
+			return my.position();
+		};
+
+		// Re-calculates Smoothie's position
+		that.refresh = function () {
+			my.position.refresh();
+		};
+
+		that.element = function () {
+			return my.$;
+		};
+		
+		that.options = function () {
+			return my.options;
+		};
+		
+		// Aliases
+		that.start = that.init;
+		that.rm = that.remove;
+		
+		my.position = function () {
+			return my._position || my.position.refresh();
+		};
+		
+		my.position.refresh = function () {
+			return my._position = { top: my.$.scrollTop(), left: my.$.scrollLeft() };
+		};		
+
+		// Returns the Smoothie's hash
+		my.hash = function () {
+			return my.$.data('hash') || my.$.attr('id') || my.$.attr('name') || null;
+		};
+		
+		return that;
+	},
 	
-	viewport = 'html, body',
-	
+	// jQuery plugin methods
 	methods = {
 		init: function (options) {
-			var opts = $.extend({}, $.fn[smoothie].defaults),
-			postion = { top: this.scrollTop(), left: this.scrollLeft() };
-				
-			opts.hash = opts.hash || this.attr('id') || this.attr('name') || smoothie + counter++;
-			
-			// save options as data
-			this.data($[smoothies].settings['data.key'], {
-				options: opts
+			this.each(function () {
+				var s = aSmoothie().init(this, options);
+				store[s.hash] = s;
 			});
-			
-			// TODO remove old smoothie if hash clash?
-			
-			// put the smoothie in the store
-			store[opts.hash] = { smoothie: this, position: position };
-			
-			return true;
-		},
-		options: function () {
-			return this.data($[smoothies].settings['data.key'].options);
-		},
-		disable: function () {
-			return this.data($[smoothies].settings['data.key'].options).disabled = true;
-		},
-		enable: function () {
-			this.data($[smoothies].settings['data.key'].options).disabled = false;
-			return true;
 		},
 		remove: function () {
-			var opts = this.data($[smoothies].settings['data.key'].options);
-			
-			// remove smoothie from store
-			store[opts.hash] = null;
-			
-			// remove options
-			this.data($[smoothies].settings['data.key'], null);
-			
-			return true;
+			this.each(function () {
+				var s = aSmoothie().init(this, {});
+				delete store[s.hash];
+			});
 		}
-	};
+	},
 	
-	// Aliases
-	methods.start = methods.init;
-
-	methods.opts = methods.options;
+	viewport = 'html, body';
 	
-	methods.rm = methods.remove;
-	methods.stop = methods.remove;
 
 	// Sanity checks
 	if ($ === undefined) {
@@ -82,7 +100,9 @@
 	
 	
 	// The jQuery plugin method
-	$.fn[smoothie] = function (argument) {		
+	$.fn[smoothie] = function (argument) {
+		var method;
+		
 		if (this.length) {
 			method = typeof argument === 'string' && argument || 'init';
 			
@@ -110,22 +130,35 @@
 	$[smoothies] = function (hash) {
 		var smoothies;
 		
+		// return single smoothie if hash given
 		if (hash) {
-			return (smoothies = store[hash]) && smoothies.smoothie || $();
+			return store[hash] && store[hash].element() || $();
 		}
 		
+		// otherwise return all smoothies
 		smoothies = $();
-		
 		$.each(store, function () {
-			smoothies = smoothies.add(this.smoothie);
+			smoothies = smoothies.add(this.element());
 		});
 		
 		return smoothies;
 	};
 	
+	// Removes the smoothie with the given hash from the store; removes all
+	// smoothies if no hash given
+	$[smoothies].remove = function (hash) {
+		if (hash) {
+			delete store[hash];
+		}
+		else {
+			store = {};
+		}
+		return true;
+	};
+	
 	// The plugin settings
 	$[smoothies].settings = {
-		'data.key': smoothie,
+		'data.key': [smoothie, 'data'].join('-'),
 		'caching': true
 	};
 	
