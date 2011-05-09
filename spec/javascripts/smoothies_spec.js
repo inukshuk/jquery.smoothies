@@ -24,7 +24,7 @@ describe('$.fn.smoothie', function () {
 		});
 		describe('and the object is not empty', function () {
 
-			describe('but the object has no data-hash, id, or name attribute', function () {
+			describe('but the object has no data-hash attribute', function () {
 				it('then the number of smoothies in the store should not change', function () {
 					$().smoothie();
 					expect($.smoothies().length).toEqual(original_length);
@@ -41,15 +41,15 @@ describe('$.fn.smoothie', function () {
 				});
 			});
 			
-			describe('and the object has an id attribute (but no data-hash)', function () {
-				var div = '<div id="foo-id", name="foo-name"/>';
-				it('then the objects should be registered by id', function () {
-					$(div).smoothie();
-					expect($.smoothies('foo-hash')).toBeEmpty();
-					expect($.smoothies('foo-id')).not.toBeEmpty();
-					expect($.smoothies('foo-name')).toBeEmpty();
-				});
-			});
+			// describe('and the object has an id attribute (but no data-hash)', function () {
+			// 	var div = '<div id="foo-id", name="foo-name"/>';
+			// 	it('then the objects should be registered by id', function () {
+			// 		$(div).smoothie();
+			// 		expect($.smoothies('foo-hash')).toBeEmpty();
+			// 		expect($.smoothies('foo-id')).not.toBeEmpty();
+			// 		expect($.smoothies('foo-name')).toBeEmpty();
+			// 	});
+			// });
 			
 		});
 		
@@ -59,7 +59,7 @@ describe('$.fn.smoothie', function () {
 		var original_length;
 
 		beforeEach(function () {
-			$('<div id="foo1"/><div id="foo2"/>').smoothie();
+			$('<div data-hash="foo1"/><div data-hash="foo2"/>').smoothie();
 			original_length = $.smoothies().length;
 		});
 		afterEach(function () {
@@ -75,21 +75,21 @@ describe('$.fn.smoothie', function () {
 
 		describe('and the object is not empty', function () {
 			describe('and all objects are registered smoothies', function () {
-				var objects = $('<div id="foo1"/><div id="foo2"/>');
+				var objects = $('<div data-hash="foo1"/><div data-hash="foo2"/>');
 				it('then that number of smoothies should be removed from the store', function () {
 					objects.smoothie('remove');
 					expect($.smoothies().length + objects.length).toEqual(original_length);
 				});
 			});
 			describe('and some objects are registered smoothies', function () {
-				var objects = $('<div id="foo2"/>');
+				var objects = $('<div data-hash="foo2"/>');
 				it('then that number of smoothies should be removed from the store', function () {
 					objects.smoothie('remove');
 					expect($.smoothies().length + objects.length).toEqual(original_length);
 				});
 			});
 			describe('and no objects are registered smoothies', function () {
-				var objects = $('<div id="foo3"/>');
+				var objects = $('<div data-hash="foo3"/>');
 				it('then the number of smoothies in the store should not change', function () {
 					objects.smoothie('remove');
 					expect($.smoothies().length).toEqual(original_length);
@@ -124,8 +124,8 @@ describe('$.smoothies', function () {
 	
 	describe('if there are smoothies', function () {
 		beforeEach(function () {
-			$('<div id="foo1"/>').smoothie();
-			$('<div id="foo2"/>').smoothie();
+			$('<div data-hash="foo1"/>').smoothie();
+			$('<div data-hash="foo2"/>').smoothie();
 		});
 		afterEach(function () {
 			$.smoothies.remove();
@@ -157,8 +157,8 @@ describe('$.smoothies.remove', function () {
 	
 	describe('If there are two smoothies in the store', function () {
 		beforeEach(function () {
-			$('<div id="foo1"/>').smoothie();
-			$('<div id="foo2"/>').smoothie();			
+			$('<div data-hash="foo1"/>').smoothie();
+			$('<div data-hash="foo2"/>').smoothie();			
 			expect($.smoothies()).not.toBeEmpty();
 		});
 		afterEach(function () {

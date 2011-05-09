@@ -13,7 +13,7 @@ beforeEach(function () {
 			return this.actual.is(':in-viewport');
 		},
 		toHaveMovedFrom: function (original) {
-			return this.actual.scrollTop() !== original.left &&
+			return this.actual.scrollTop() !== original.top &&
 				this.actual.scrollLeft() !== original.left;
 		},
 		toBeEmpty: function () {

@@ -25,6 +25,11 @@
 			return my.position();
 		};
 
+		// Returns true if the Smoothie is currently inside the viewport
+		that.visible = function () {
+			return my.$.is(':in-viewport');
+		};
+		
 		// Re-calculates Smoothie's position
 		that.refresh = function () {
 			my.position.refresh();
@@ -47,12 +52,13 @@
 		};
 		
 		my.position.refresh = function () {
-			return my._position = { top: my.$.scrollTop(), left: my.$.scrollLeft() };
+			var offset = my.$.offset();
+			return my._position = { scrollTop: offset.top, scrollLeft: offset.left };
 		};		
 
 		// Returns the Smoothie's hash
 		my.hash = function () {
-			return my.$.data('hash') || my.$.attr('id') || my.$.attr('name') || null;
+			return my.$.data('hash') || null; // my.$.attr('id') || my.$.attr('name') || null;
 		};
 		
 		return that;
@@ -85,15 +91,15 @@
 	// TODO check for required plugins
 
 	// TODO Work around viewport quirks
-	viewport = $('html');
+	viewport = $(viewport);
 	// $(viewport).each(function () {
-	// 	var $this = $(this), reset = $this.attr('scrollTop');
+	// 	var $this = $(this), reset = $this.css('scrollTop');
 	// 
-	// 	$this.attr('scrollTop', reset + 1);
+	// 	$this.css('scrollTop', reset + 1);
 	// 	
-	// 	if ($this.attr('scrollTop') === reset + 1) {
+	// 	if ($this.css('scrollTop') === reset + 1) {
 	// 		viewport = $(this.nodeName.toLowerCase());
-	// 		$this.attr('scrollTop', reset);
+	// 		$this.css('scrollTop', reset);
 	// 		return false;
 	// 	}
 	// });
@@ -167,27 +173,26 @@
 	
 	
 	$(window).hashchange(function (event) {
-		var smoothie = store[window.location.hash];
+		var smoothie = store[window.location.hash.replace(/^#/, '')], position;
 
-		if (smoothie) {
-			event.preventDefault();
+		if (smoothie && !smoothie.visible()) {
+			viewport.animate(smoothie.position());
 		}
 
-		event.preventDefault();
-		
 		return true;
 	});
 
-	$('body').delegate('a[href^="#"]', 'click', function (event) {
-		var hash = this.attr(href).slice(1);
-		
-		if (store[hash]) {
-			event.preventDefault();
-			window.location.hash = hash;
-		}
-		
-		return true;
-	});
+	// $('a[href^="#"]').live('click', function (event) {
+	// 	var hash = $(this).attr('href').slice(1);
+	// 
+	// 	if (store[hash]) {
+	// 		event.preventDefault();
+	// 		// window.location.hash = hash;
+	// 	}
+	// 
+	// 	return true;
+	// });
+	
 
 	return true;
 
