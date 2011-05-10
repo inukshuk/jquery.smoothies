@@ -25,7 +25,7 @@ task :minify => [] do
   end
 end
 
-task :package => [:minify] do
+task :build => [:minify] do
   File.open('jquery.smoothies.dep.min.js', 'w') do |f|
     f.puts File.read('lib/jquery.ba-hashchange.min.js')
     f.puts File.read('lib/jquery.viewport.min.js')

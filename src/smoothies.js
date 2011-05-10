@@ -10,7 +10,7 @@
 		
 		that.init = function (element, options) {
 			my.$ = $(element);
-			my.options = $.extend({}, $.fn[smoothie].defaults);			
+			my.options = $.extend({}, $.fn[smoothie].defaults, options);			
 			
 			this.hash = my.hash();
 			
@@ -190,11 +190,8 @@
 	
 	
 	$(window).hashchange(function (event) {
-		var smoothie = store[window.location.hash.replace(/^#/, '')], position;
-
-		if (smoothie) {
-			smoothie.go();			
-		}
+		var smoothie = store[window.location.hash.replace(/^#/, '')];
+		smoothie && smoothie.go();
 
 		return true;
 	});

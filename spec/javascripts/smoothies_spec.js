@@ -51,6 +51,48 @@ describe('$.fn.smoothie', function () {
 			// 	});
 			// });
 			
+			
+			describe('and I define a before callback', function () {
+				var called;
+				
+				beforeEach(function () {
+					called = false;
+					window.location.hash = '';
+					$('<div data-hash="foo"/>').smoothie({ before: function () {
+						called = this.data('hash');
+					} });
+					// $('<div data-hash="foo"/>').smoothie();
+				});
+				afterEach(function () {
+					window.location.hash = '';
+					$.smoothies.remove();
+				});
+				
+				it('then the callback will be called when the hash changes', function () {
+					runs(function () {
+						goToHash('foo');
+					});
+					
+					waits(50);
+					
+					runs(function () {
+						expect(called).toBeTruthy();
+					});
+				});
+
+				it('then the callback will be applied to the smoothie element when the hash changes', function () {
+					runs(function () {
+						goToHash('foo');
+					});
+					
+					waits(50);
+					
+					runs(function () {
+						expect(called).toEqual('foo');
+					});
+				});				
+			});
+			
 		});
 		
 	});
