@@ -2,7 +2,7 @@
 
 "use strict";
 
-;(function ($, smoothie, smoothies, version) {
+(function ($, smoothie, smoothies, version, window, undefined) {
 	var store = {},
 
 	aSmoothie = function (scope) {
@@ -44,7 +44,11 @@
 		
 		// Returns true if the Smoothie is currently inside the viewport
 		that.visible = function () {
-			return my.$.is(':in-viewport');
+			var vp = my.viewport, w = vp.width(), h = vp.height(), o = my.$.offset(),
+				y = o.top - my.options.offset, x = o.left - my.options.offset,
+				dy = y - vp.scrollTop(), dx = x - vp.scrollLeft();
+
+			return dy > 0 && dy < h && dx > 0 && dx < w
 		};
 		
 		// Re-calculates Smoothie's position
@@ -100,9 +104,17 @@
 		}
 	},
 	
+	//
+	// Different Browser's use different object's to scroll the viewport.
+	// This function tries to select a suitable candidate without doing any
+	// browser sniffing.
+	//
+	// Credit goes to Karl Swedberg's Smooth-Scroll implementation:
+	// https://github.com/kswedberg/jquery-smooth-scroll/
+	//
 	viewport = function (candidates) {
 		var vp;
-		
+	
 		$(candidates).each(function () {
 			var $this = $(this);
 
@@ -229,4 +241,4 @@
 
 	return true;
 
-}(jQuery, 'smoothie', 'smoothies', '0.0.1'));
+}(jQuery, 'smoothie', 'smoothies', '0.0.1', window));
