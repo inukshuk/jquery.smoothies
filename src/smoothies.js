@@ -192,8 +192,11 @@
 	$(window).hashchange(function (event) {
 		var smoothie = store[window.location.hash.replace(/^#/, '')];
 		smoothie && smoothie.go();
-
 		return true;
+	}).load(function (event) {
+		var smoothie = store[window.location.hash.replace(/^#/, '')];
+		smoothie && smoothie.go();
+		return true;		
 	});
 
 	// $('a[href^="#"]').live('click', function (event) {
