@@ -16,12 +16,19 @@ LICENSE = <<-END
  *
  * Date: #{ Time.now.to_s }
  */
-
 END
 
 task :minify => [] do
   File.open('jquery.smoothies.min.js', 'w') do |f|
     f.puts LICENSE
     f.puts Uglifier.new.compile(File.read('src/smoothies.js'))
+  end
+end
+
+task :package => [:minify] do
+  File.open('jquery.smoothies.dep.min.js', 'w') do |f|
+    f.puts File.read('lib/jquery.ba-hashchange.min.js')
+    f.puts File.read('lib/jquery.viewport.min.js')
+    f.puts File.read('jquery.smoothies.min.js')
   end
 end

@@ -25,6 +25,22 @@
 			return my.position();
 		};
 
+		that.go = function () {
+			if ($.isFunction(my.options.before)) {
+				my.options.before.apply(my.$,[]);
+			}
+			
+			if (!this.visible()) {
+				viewport.animate(this.position(), my.options.duration,
+					my.options.easing, $.proxy(my.options.after, my.$));
+			}
+			else {
+				if ($.isFunction(my.options.after)) {
+					my.options.after.apply(my.$,[]);
+				}				
+			}
+		};
+		
 		// Returns true if the Smoothie is currently inside the viewport
 		that.visible = function () {
 			return my.$.is(':in-viewport');
@@ -126,9 +142,10 @@
 	// The default options
 	$.fn[smoothie].defaults = {
 		offset: 0,
-		flavor: 'swing',
+		easing: 'swing',
 		duration: 'normal',
-		callback: null 
+		before: null ,
+		after: null
 	};
 
 	// Returns a jQuery collection of all smoothies; or of the smoothie
@@ -175,8 +192,8 @@
 	$(window).hashchange(function (event) {
 		var smoothie = store[window.location.hash.replace(/^#/, '')], position;
 
-		if (smoothie && !smoothie.visible()) {
-			viewport.animate(smoothie.position());
+		if (smoothie) {
+			smoothie.go();			
 		}
 
 		return true;
