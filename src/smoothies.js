@@ -11,6 +11,7 @@
 		that.init = function (element, options) {
 			my.$ = $(element);
 			my.options = $.extend({}, $.fn[smoothie].defaults, options);			
+			my.viewport = viewport(my.options.viewport);
 			
 			this.hash = my.hash();
 			
@@ -31,7 +32,7 @@
 			}
 			
 			if (!this.visible()) {
-				viewport.animate(this.position(), my.options.duration,
+				my.viewport.stop().animate(this.position(), my.options.duration,
 					my.options.easing, $.proxy(my.options.after, my.$));
 			}
 			else {
@@ -69,7 +70,10 @@
 		
 		my.position.refresh = function () {
 			var offset = my.$.offset();
-			return my._position = { scrollTop: offset.top, scrollLeft: offset.left };
+			return my._position = {
+				scrollTop: offset.top - my.options.offset,
+				scrollLeft: offset.left - my.options.offset
+			};
 		};		
 
 		// Returns the Smoothie's hash
@@ -96,7 +100,32 @@
 		}
 	},
 	
-	viewport = 'html, body';
+	viewport = function (candidates) {
+		var vp;
+		
+		$(candidates).each(function () {
+			var $this = $(this);
+
+			if (this === document || this === window) { return true; }
+
+			if ($this.scrollTop() > 0) {
+				vp = $this;
+				return false;
+			}
+
+			$this.scrollTop(1);
+
+			if ($this.scrollTop() > 0) {
+				$this.scrollTop(0);
+				vp = $this;
+				return false;
+			}
+
+			return true;
+		});	
+		
+		return vp;
+	};
 	
 
 	// Sanity checks
@@ -106,20 +135,6 @@
 	
 	// TODO check for required plugins
 
-	// TODO Work around viewport quirks
-	viewport = $(viewport);
-	// $(viewport).each(function () {
-	// 	var $this = $(this), reset = $this.css('scrollTop');
-	// 
-	// 	$this.css('scrollTop', reset + 1);
-	// 	
-	// 	if ($this.css('scrollTop') === reset + 1) {
-	// 		viewport = $(this.nodeName.toLowerCase());
-	// 		$this.css('scrollTop', reset);
-	// 		return false;
-	// 	}
-	// });
-	
 	
 	// The jQuery plugin method
 	$.fn[smoothie] = function (argument) {
@@ -145,7 +160,8 @@
 		easing: 'swing',
 		duration: 'normal',
 		before: null ,
-		after: null
+		after: null,
+		viewport: 'html,body'
 	};
 
 	// Returns a jQuery collection of all smoothies; or of the smoothie
