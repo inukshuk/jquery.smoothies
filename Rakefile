@@ -1,4 +1,6 @@
 
+require 'bundler/setup'
+
 require 'jasmine'
 load 'jasmine/tasks/jasmine.rake'
 
@@ -28,7 +30,6 @@ end
 task :build => [:minify] do
   File.open('jquery.smoothies.dep.min.js', 'w') do |f|
     f.puts File.read('lib/jquery.ba-hashchange.min.js')
-    f.puts File.read('lib/jquery.viewport.min.js')
     f.puts File.read('jquery.smoothies.min.js')
   end
 end

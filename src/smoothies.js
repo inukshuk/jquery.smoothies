@@ -15,6 +15,8 @@
 			
 			this.hash = my.hash();
 			
+			my.$.data('smoothie', this);
+			
 			return this;
 		};
 		
@@ -44,11 +46,20 @@
 		
 		// Returns true if the Smoothie is currently inside the viewport
 		that.visible = function () {
-			var vp = my.viewport, w = vp.width(), h = vp.height(), o = my.$.offset(),
-				y = o.top - my.options.offset, x = o.left - my.options.offset,
-				dy = y - vp.scrollTop(), dx = x - vp.scrollLeft();
+			var vp = my.viewport, $w = $(window), w = $w.width(), h = $w.height(),
+				o = my.$.offset(), dy = o.top - my.options.offset - vp.scrollTop(),
+				dx = o.left - my.options.offset - vp.scrollLeft();
 
-			return dy > 0 && dy < h && dx > 0 && dx < w
+			// top and left edges
+			if (dy <= 0 || dx <= 0) {
+				return false;
+			}
+
+			dy = o.top + my.$.outerHeight() - h - vp.scrollTop();
+			dx = o.left + my.$.outerWidth() - w - vp.scrollLeft();
+			
+			// bottom and right edges
+			return dy <= 0 && dx <= 0;
 		};
 		
 		// Re-calculates Smoothie's position
@@ -91,15 +102,19 @@
 	// jQuery plugin methods
 	methods = {
 		init: function (options) {
-			this.each(function () {
+			return this.each(function () {
 				var s = aSmoothie().init(this, options);
 				store[s.hash] = s;
 			});
 		},
+		get: function () {
+			return this.map(function () {
+				return store[$(this).data('hash')];
+			});
+		},
 		remove: function () {
-			this.each(function () {
-				var s = aSmoothie().init(this, {});
-				delete store[s.hash];
+			return this.each(function () {
+				delete store[$(this).data('hash')];
 			});
 		}
 	},
@@ -156,7 +171,7 @@
 			method = typeof argument === 'string' && argument || 'init';
 			
 			if (methods[method]) {
-				methods[method].apply(this, arguments);
+				return methods[method].apply(this, arguments);
 			}
 			else {
 				$.error('Method ' + method + ' is not supported by jquery-' + smoothies);
@@ -171,7 +186,7 @@
 		offset: 0,
 		easing: 'swing',
 		duration: 'normal',
-		before: null ,
+		before: null,
 		after: null,
 		viewport: 'html,body'
 	};
